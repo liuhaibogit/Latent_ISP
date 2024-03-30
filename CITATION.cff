@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+message: "If you use DeepSDF in your research, please cite the paper https://arxiv.org/abs/2311.07187"
+title: "Solving Inverse Obstacle Scattering Problem with Latent Surface Representations"
+version: 1.0.0
+date-released: 2023-04-01
+authors: Junqing Chen, Bangti Jin and Haibo Liu
