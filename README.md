@@ -6,7 +6,7 @@ This is an implementation of 'Solving Inverse Obstacle Scattering Problem with L
 
 # File Organization
 
-# How to Use DeepSDF
+# How to Use Latent_ISP
 
 # Examples
 
