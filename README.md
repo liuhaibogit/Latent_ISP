@@ -7,10 +7,15 @@ This is an implementation of 'Solving Inverse Obstacle Scattering Problem with L
 # File Organization
 
 # How to Use Latent_ISP
+The preprocessing code has the following requirements:
+bempp-cl
+DeepSDF
 
-# Examples
+To use a trained model to reconstruct explicit mesh representations of shapes from far-field data, run:
+> python far_field_plane.py
 
 # Team
+Junqing Chen, Bangti Jin, Haibo Liu
 
 # Acknowledgements
 
