@@ -3,6 +3,7 @@
 This is an implementation of 'Solving Inverse Obstacle Scattering Problem with Latent Surface Representations" by Junqing Chen, Bangti Jin and Haibo Liu. See the paper [here](https://arxiv.org/abs/2311.07187).
 
 # Citing Latent_ISP
+If you use Latent_ISP in your research, please cite the [paper](https://arxiv.org/abs/2311.07187):
 ```
 @misc{chen2023solving,
 	title={Solving Inverse Obstacle Scattering Problem with Latent Surface Representations}, 
