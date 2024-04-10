@@ -15,8 +15,6 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 }
 ```
 
-# File Organization
-
 # How to Use Latent_ISP
 The preprocessing code has the following requirements:
 - [bempp-cl](https://bempp.com/)
