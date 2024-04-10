@@ -19,8 +19,8 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 # How to Use Latent_ISP
 The preprocessing code has the following requirements:
-- bempp-cl
-- DeepSDF
+- [bempp-cl](https://bempp.com/)
+- [DeepSDF](https://github.com/facebookresearch/DeepSDF)
 
 To use a trained model to reconstruct explicit mesh representations of shapes from far-field data, run:
 > python far_field_plane.py
