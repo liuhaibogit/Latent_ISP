@@ -24,12 +24,12 @@ parser.add_argument("--iterations", default=2000)
 parser.add_argument("--wavenumber", default=5*np.pi)
 parser.add_argument("--num_d", default=10)
 parser.add_argument("--num_far", default=100)
-parser.add_argument("--z_i", type=int, default=410) # 0-1780 in train
-parser.add_argument("--z_t", type=int, default=2230) # 1780-2236 in test
-parser.add_argument("--delta", default=0)
+parser.add_argument("--z_i", type=int, default=560) # 0-1780 in train
+parser.add_argument("--z_t", type=int, default=2000) # 1780-2236 in test
+parser.add_argument("--delta", default=0.4)
 parser.add_argument("--CodeRegularization", default=False)
 parser.add_argument("--CodeRegularizationLambda", default=5e-1)
-parser.add_argument("--tol", default=1E-4)
+parser.add_argument("--tol", default=1E-5)
 parser.add_argument("--lr", default=0.001)
 parser.add_argument("--Nr", type=int, default=32)
 parser.add_argument("--level", default=0.05)
@@ -120,6 +120,7 @@ def main_function():
 
 
     # far filed pattern of target object
+
     far_target = np.zeros((d_i.shape[0], points.shape[1])).astype(complex)
     grid = bempp.api.Grid(verts_target.transpose(), faces_target.transpose())
     piecewise_const_space = bempp.api.function_space(grid, "DP", 0)
@@ -139,15 +140,17 @@ def main_function():
         combined_ui_fun = bempp.api.GridFunction(piecewise_const_space, fun=combined_ui)
         un_fun, info = gmres(lhs, combined_ui_fun, tol=args.tol)
         far_target[ith,:] = -single_far * un_fun
-    normal = np.random.rand(d_i.shape[0], points.shape[1])
+
+
+    normal = 2 * np.random.random((d_i.shape[0], points.shape[1])) - 1
     # far_target = far_target + args.delta*normal*far_target
     far_target = far_target + args.delta * normal * np.max(far_target)
 
 
 
     # optimizer
-    # optimizer = torch.optim.Adam([latent_init], lr=args.lr)
-    optimizer = torch.optim.SGD([latent_init], lr=args.lr)
+    optimizer = torch.optim.Adam([latent_init], lr=args.lr)
+    # optimizer = torch.optim.SGD([latent_init], lr=args.lr)
 
 
 
