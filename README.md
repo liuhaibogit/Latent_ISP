@@ -17,13 +17,13 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 # How to Use Latent_ISP
 
-This is the repro-pack for the latent-ISP using bempp-cl and exafmm-t. It has the following structure:
+This is the repro-pack for the latent-ISP using bempp-cl and DeepSDF. It has the following structure:
 
 - `logs`: a.
 
 Following the steps below to run each case:
 
-### 1. Install bempp-cl and exafmm-t
+### 1. Install bempp-cl
 
 We suggest to use `conda` as the package manager and create a conda environment for this application.
 ``` bash
@@ -33,30 +33,19 @@ conda install -n bempp --yes -c conda-forge pocl pyopencl meshio
 ```
 Then activate this environment: `conda activate bempp`.
 
-Next, we need to install exafmm-t's dependencies: OpenBLAS and FFTW3. Follow these commands to install them on Ubuntu:
-``` bash
-apt-get update
-apt-get -y install libopenblas-dev libfftw3-dev
-```
-Modify the commands accordingly if you are running other Linux distributions or using another package manager.
-
-Finally, install `bempp-cl` and `exafmm-t`:
+Next, install `bempp-cl`:
 ``` bash
 pip install git+git://github.com/bempp/bempp-cl@v0.2.2
-pip install git+git://github.com/exafmm/exafmm-t
 ```
 
 The installation will take several minutes on a normal workstation.
 
-### 2. Clone this repo
-
-Next, clone this repo locally, change directory to this `repro-pack` folder:
+Next, clone the repo:
 ``` bash
 git clone https://github.com/barbagroup/bempp_exafmm_paper.git
-cd bempp_exafmm_paper/repro-pack 
+```
 
-
-### 4. Run/Sumbit the script
+### 2. Run/Sumbit the script
 ``` bash
 > python far_field_plane.py
 ```
