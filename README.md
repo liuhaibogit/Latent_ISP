@@ -45,7 +45,7 @@ The installation will take several minutes on a normal workstation.
 
 Next, clone the repo:
 ``` bash
-git clone https://github.com/barbagroup/bempp_exafmm_paper.git
+git clone https://github.com/liuhaibogit/Latent_ISP.git
 ```
 
 ### 2. Run the script
