@@ -21,18 +21,17 @@ parser.add_argument("--sdf_log_dir", default=root + '/logs/DeepSDF_plane')
 parser.add_argument("--optimization_dir", default=root + '/logs/opt_plane_' + time.strftime('%m_%d_%H%M%S'))
 parser.add_argument("--LogFrequency", default=1)
 parser.add_argument("--iterations", default=2000)
-parser.add_argument("--wavenumber", default=5*np.pi)
-parser.add_argument("--num_d", default=10)
-parser.add_argument("--num_far", default=100)
-parser.add_argument("--z_i", type=int, default=560) # 0-1780 in train
-parser.add_argument("--z_t", type=int, default=2000) # 1780-2236 in test
-parser.add_argument("--delta", default=0.4)
-parser.add_argument("--CodeRegularization", default=False)
-parser.add_argument("--CodeRegularizationLambda", default=5e-1)
 parser.add_argument("--tol", default=1E-5)
 parser.add_argument("--lr", default=0.001)
 parser.add_argument("--Nr", type=int, default=32)
 parser.add_argument("--level", default=0.05)
+parser.add_argument("--wavenumber", default=5*np.pi)
+parser.add_argument("--num_d", default=4)
+parser.add_argument("--num_far", default=100)
+parser.add_argument("--z_i", type=int, default=410) # 0-1780 in train
+parser.add_argument("--z_t", type=int, default=2230) # 1780-2236 in test
+parser.add_argument("--delta", default=0)
+
 
 
 
@@ -120,7 +119,6 @@ def main_function():
 
 
     # far filed pattern of target object
-
     far_target = np.zeros((d_i.shape[0], points.shape[1])).astype(complex)
     grid = bempp.api.Grid(verts_target.transpose(), faces_target.transpose())
     piecewise_const_space = bempp.api.function_space(grid, "DP", 0)
@@ -154,8 +152,6 @@ def main_function():
 
 
 
-    do_code_regularization = args.CodeRegularization
-    code_reg_lambda = args.CodeRegularizationLambda
 
 
     print("Starting optimization:")
@@ -248,10 +244,7 @@ def main_function():
         optimizer.zero_grad()
         dL_ds_i = -torch.matmul(dL_dx_i.unsqueeze(1), normals.unsqueeze(-1)).squeeze(-1)
         # refer to Equation (4) in the main paper
-        if do_code_regularization:
-            loss_backward = torch.sum(dL_ds_i * pred_sdf) + code_reg_lambda * torch.norm(latent_init)
-        else:
-            loss_backward = torch.sum(dL_ds_i * pred_sdf)
+        loss_backward = torch.sum(dL_ds_i * pred_sdf)
         loss_backward.backward()
         # and update params
         optimizer.step()

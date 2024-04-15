@@ -4,6 +4,5 @@ from .mesh import *
 from .sdf import _cartesian_product
 from ._utils import del_file
 from .data import *
-from .misc import *
 from ._utils import *
 from .sdf import *
