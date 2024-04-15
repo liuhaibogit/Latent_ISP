@@ -46,7 +46,6 @@ The installation will take several minutes on a normal workstation.
 Next, clone the repo:
 ``` bash
 git clone https://github.com/liuhaibogit/Latent_ISP.git
-cd 
 ```
 
 ### 2. Training a DeepSDF Model
@@ -56,7 +55,7 @@ one could train the DeepSDF Model following https://github.com/facebookresearch/
 
 ### 2. Run the script
 ``` bash
-> python far_field_plane.py
+> python optimize/far_field_plane.py
 ```
 
 
