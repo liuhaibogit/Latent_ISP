@@ -19,7 +19,10 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 This is the repro-pack for the latent-ISP using bempp-cl and DeepSDF. It has the following structure:
 
-- `logs`: a.
+- `networks`: the network of DeepSDF.
+- `train`: you can train a new network with DeepSDF.
+- `optimize`: do the shape optimization.
+- `logs`: saving the network and optimizing results.
 
 Following the steps below to run each case:
 
@@ -42,14 +45,18 @@ The installation will take several minutes on a normal workstation.
 
 Next, clone the repo:
 ``` bash
-git clone https://github.com/barbagroup/bempp_exafmm_paper.git
+git clone https://github.com/liuhaibogit/Latent_ISP.git
 ```
 
-### 2. Run/Sumbit the script
+### 2. Training a DeepSDF Model
+one could train the DeepSDF Model following https://github.com/facebookresearch/DeepSDF.git, and we have provided a trained neural network in the logs/DeepSDF_plane folder.
+
+
+
+### 2. Run the script
 ``` bash
-> python far_field_plane.py
+> python optimize/far_field_plane.py
 ```
-
 
 
 # Team
