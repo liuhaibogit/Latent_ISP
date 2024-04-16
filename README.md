@@ -41,9 +41,15 @@ pip install git+git://github.com/bempp/bempp-cl@v0.2.2
 
 The installation will take several minutes on a normal workstation.
 
+Next, install pytorch depending on your device. For example,
+``` bash
+pip3 install torch torchvision torchaudio
+```
+
 Next, clone the repo:
 ``` bash
 git clone https://github.com/liuhaibogit/Latent_ISP.git
+cd Latent_ISP
 ```
 
 ### 2. Training a DeepSDF Model
