@@ -19,10 +19,8 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 This is the repro-pack for the latent-ISP using bempp-cl and DeepSDF. It has the following structure:
 
-- `networks`: the network of DeepSDF.
-- `train`: you can train a new network with DeepSDF.
 - `optimize`: do the shape optimization.
-- `logs`: saving the network and optimizing results.
+- `logs`: saving the trained DeepSDF network and optimizing results.
 
 Following the steps below to run each case:
 
@@ -53,7 +51,7 @@ one could train the DeepSDF Model following https://github.com/facebookresearch/
 
 
 
-### 2. Run the script
+### 3. Run the script
 ``` bash
 > python optimize/far_field_plane.py
 ```
@@ -61,3 +59,5 @@ one could train the DeepSDF Model following https://github.com/facebookresearch/
 
 # Team
 Junqing Chen, Bangti Jin, Haibo Liu
+
+
