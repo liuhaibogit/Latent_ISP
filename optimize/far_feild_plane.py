@@ -1,17 +1,18 @@
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
+from os.path import join
 import sys
 sys.path.append('..')
 sys.path.append('../utils')
+import json
 import argparse
 import signal
 from tqdm import tqdm
-from train.train_deep_sdf import parser as sdf_parser
-from utils import *
 import bempp
 from bempp.api.linalg import gmres
 from bempp.api.operators.far_field import helmholtz as helmholtz_far
-
+import time
+from utils import *
 
 
 root = join(os.path.dirname(os.path.realpath(__file__)), '..')
@@ -20,18 +21,31 @@ parser = argparse.ArgumentParser(description="")
 parser.add_argument("--sdf_log_dir", default=root + '/logs/DeepSDF_plane')
 parser.add_argument("--optimization_dir", default=root + '/logs/opt_plane_' + time.strftime('%m_%d_%H%M%S'))
 parser.add_argument("--LogFrequency", default=1)
-parser.add_argument("--iterations", default=2000)
-parser.add_argument("--tol", default=1E-5)
-parser.add_argument("--lr", default=0.001)
-parser.add_argument("--Nr", type=int, default=32)
-parser.add_argument("--level", default=0.05)
-parser.add_argument("--wavenumber", default=5*np.pi)
-parser.add_argument("--num_d", default=4)
-parser.add_argument("--num_far", default=100)
-parser.add_argument("--z_i", type=int, default=410) # 0-1780 in train
-parser.add_argument("--z_t", type=int, default=2230) # 1780-2236 in test
-parser.add_argument("--delta", default=0)
-
+parser.add_argument("--iterations", default=2000) # optimize iterations
+# architecture of the DeepSDF network and latent
+parser.add_argument("--NetworkArch", default="DeepSDF")
+parser.add_argument("--NetworkSpecs", default={
+    "dims" : [ 512, 512, 512, 512, 512, 512, 512, 512],
+    "dropout" : [0, 1, 2, 3, 4, 5, 6, 7],
+    "dropout_prob" : 0.2,
+    "norm_layers" : [0, 1, 2, 3, 4, 5, 6, 7],
+    "latent_in" : [4],
+    "xyz_in_all" : False,
+    "use_tanh" : False,
+    "latent_dropout" : False,
+    "weight_norm" : True
+    })
+parser.add_argument("--CodeLength", default=256)
+parser.add_argument("--tol", default=1E-5) # GMRES tol
+parser.add_argument("--lr", default=0.001) # optimize learning rate
+parser.add_argument("--Nr", type=int, default=32) # marching cubes space
+parser.add_argument("--level", default=0.05) # marching cubes level
+parser.add_argument("--wavenumber", default=5*np.pi) # wavenumber
+parser.add_argument("--num_d", default=4) # number of incident direction
+parser.add_argument("--num_far", default=100) # number of Observed direction
+parser.add_argument("--z_i", type=int, default=410) # 0-1780 in training set
+parser.add_argument("--z_t", type=int, default=2230) # 1780-2236 in test set
+parser.add_argument("--delta", default=0) # noise level
 
 
 
@@ -44,7 +58,6 @@ def main_function():
 
     # Parse input arguments
     args = parser.parse_args()
-    sdf_args = sdf_parser.parse_args()
 
 
     # Create logging files/folders for losses
@@ -60,40 +73,40 @@ def main_function():
         json.dump(dict(vars(args)), f, indent=1)
 
 
-    # load decoder and latent
-    arch = __import__("networks." + sdf_args.NetworkArch, fromlist=["Decoder"])
-    decoder = arch.Decoder(sdf_args.CodeLength, **sdf_args.NetworkSpecs).to(device)  # for plane
+    # load DeepSDF and latent
+    arch = __import__("networks." + args.NetworkArch, fromlist=["DeepSDF"])
+    DeepSDF = arch.DeepSDF(args.CodeLength, **args.NetworkSpecs).to(device)  # for plane
     saved_model_state = torch.load(args.sdf_log_dir + '/experiment_train.pth', map_location=torch.device('cpu'))
-    decoder.load_state_dict(saved_model_state['weights'])
+    DeepSDF.load_state_dict(saved_model_state['weights'])
     latent = saved_model_state["latent_codes"]["weight"].to(device)
 
 
     # initialize and visualize initialization
     latent_init = latent[args.z_i]
     latent_init.requires_grad = True
-    verts_init, faces_init, normals_init = utils.create_mesh_with_edge(decoder, latent_init.detach(), N=args.Nr, l=args.level)
+    verts_init, faces_init, normals_init = create_mesh_with_edge(DeepSDF, latent_init.detach(), N=args.Nr, l=args.level)
     image_filename = os.path.join(images_dir, "init.html")
     write_verts_faces_to_file(verts_init, faces_init, image_filename)
     torch.save(latent_init, label_dir + '/' + "init.pt")
     print('init vert shape:', verts_init.shape, '\ninit faces shape:', faces_init.shape)
 
 
-    # load decoder and latent
-    arch = __import__("networks." + sdf_args.NetworkArch, fromlist=["Decoder"])
-    decoder_total = arch.Decoder(sdf_args.CodeLength, **sdf_args.NetworkSpecs).to(device)  # for plane
+    # load DeepSDF and latent
+    arch = __import__("networks." + args.NetworkArch, fromlist=["DeepSDF"])
+    DeepSDF_total = arch.DeepSDF(args.CodeLength, **args.NetworkSpecs).to(device)  # for plane
     saved_model_state_total = torch.load(args.sdf_log_dir + '/experiment_total.pth', map_location=torch.device('cpu'))
-    decoder_total.load_state_dict(saved_model_state_total['weights'])
+    DeepSDF_total.load_state_dict(saved_model_state_total['weights'])
     latent_total = saved_model_state_total["latent_codes"]["weight"].to(device)
 
 
     # target stuff
     latent_target = latent_total[args.z_t]
     latent_target.requires_grad = False
-    verts_target, faces_target, normals_target = utils.create_mesh_with_edge(decoder_total, latent_target, N=args.Nr, l=args.level)
+    verts_target, faces_target, normals_target = create_mesh_with_edge(DeepSDF_total, latent_target, N=args.Nr, l=args.level)
     image_filename = os.path.join(images_dir, "target.html")
     write_verts_faces_to_file(verts_target, faces_target, image_filename)
     torch.save(latent_target, label_dir + '/' + "target.pt")
-    indicator_target = indicator_plane(decoder_total, latent_target, N=args.Nr, l=args.level)
+    indicator_target = indicator_plane(DeepSDF_total, latent_target, N=args.Nr, l=args.level)
     print('latent.shape: ', latent.shape, '\nlatent_total.shape: ', latent_total.shape)
 
 
@@ -161,7 +174,7 @@ def main_function():
         optimizer.zero_grad()
 
         # first extract iso-surface
-        verts, faces, normals = utils.create_mesh_with_edge(decoder, latent_init.detach(), N=args.Nr, l=args.level)
+        verts, faces, normals = create_mesh_with_edge(DeepSDF, latent_init.detach(), N=args.Nr, l=args.level)
 
 
         grid = bempp.api.Grid(verts.transpose(), faces.transpose())
@@ -222,7 +235,7 @@ def main_function():
 
         # compute loss of far field pattern
         loss_epoch = np.linalg.norm(far - far_target) ** 2 / (2 * points.shape[1] * d_i.shape[0])
-        indicator_init = indicator_plane(decoder, latent_init, N=args.Nr, l=args.level)
+        indicator_init = indicator_plane(DeepSDF, latent_init, N=args.Nr, l=args.level)
         indicator_error = torch.norm(indicator_target-indicator_init).squeeze().detach().cpu().numpy()
         print('%d,%.5f,%.5f' % (epoch, loss_epoch, indicator_error),file=epoch_log, flush=True)
         training_loop.set_description('%.4f' % (float(loss_epoch)))
@@ -235,7 +248,7 @@ def main_function():
         optimizer.zero_grad()
         verts_dr = torch.tensor(verts.astype(float), requires_grad = True, dtype=torch.float64, device=device)
         latent_inputs = latent_init.expand(verts_dr.shape[0], -1)
-        pred_sdf = decoder(torch.cat([latent_inputs, verts_dr], 1).to(torch.float64))
+        pred_sdf = DeepSDF(torch.cat([latent_inputs, verts_dr], 1).float())
         loss_normals = torch.sum(pred_sdf)
         loss_normals.backward(retain_graph = True)
         # normalization to take into account for the fact sdf is not perfect...
@@ -252,7 +265,7 @@ def main_function():
 
         # log stuff
         if epoch % args.LogFrequency == 0:
-            utils.plot_error(optimization_meshes_dir)
+            plot_error(optimization_meshes_dir)
             image_filename = images_dir + '/' + str(epoch) + '.html'
             field = torch.real(shape_derivative.unsqueeze(1))
             write_verts_faces_fields_to_file(verts, faces, field, image_filename)
