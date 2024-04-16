@@ -19,7 +19,7 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 Following the steps below to run each case:
 
-### 1. Install bempp-cl
+### 1. Install Latent_ISP
 
 We suggest to use `conda` as the package manager and create a conda environment for this application.
 ``` bash
