@@ -59,3 +59,5 @@ one could train the DeepSDF Model following https://github.com/facebookresearch/
 
 # Team
 Junqing Chen, Bangti Jin, Haibo Liu
+
+
