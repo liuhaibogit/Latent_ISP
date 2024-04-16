@@ -51,7 +51,7 @@ one could train the DeepSDF Model following https://github.com/facebookresearch/
 
 
 
-### 2. Run the script
+### 3. Run the script
 ``` bash
 > python optimize/far_field_plane.py
 ```
