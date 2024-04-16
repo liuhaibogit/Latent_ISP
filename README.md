@@ -29,7 +29,7 @@ Following the steps below to run each case:
 We suggest to use `conda` as the package manager and create a conda environment for this application.
 ``` bash
 conda create --yes -n bempp python=3.8
-conda install -n bempp --yes numpy scipy matplotlib numba pytest jupyter plotly git pip mpi4py pyyaml
+conda install -n bempp --yes numpy scipy matplotlib numba scikit-image plotly git pip mpi4py pandas
 conda install -n bempp --yes -c conda-forge pocl pyopencl meshio
 ```
 Then activate this environment: `conda activate bempp`.
