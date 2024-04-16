@@ -53,7 +53,7 @@ cd Latent_ISP
 ```
 
 ### 2. Training a DeepSDF Model
-one could train the DeepSDF Model following https://github.com/facebookresearch/DeepSDF.git, and we have provided a trained neural network in the logs/DeepSDF_plane folder.
+one could train the DeepSDF Model following https://github.com/facebookresearch/DeepSDF.git, and we have provided a trained neural network in the logs/DeepSDF_plane folder. The experiment_train model is trained with the training data, and the experiment_total is trained with the test data which is used only to generate the scattering data.
 
 
 
