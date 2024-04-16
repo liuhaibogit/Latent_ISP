@@ -19,8 +19,6 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 This is the repro-pack for the latent-ISP using bempp-cl and DeepSDF. It has the following structure:
 
-- `networks`: the network of DeepSDF.
-- `train`: you can train a new network with DeepSDF.
 - `optimize`: do the shape optimization.
 - `logs`: saving the network and optimizing results.
 
