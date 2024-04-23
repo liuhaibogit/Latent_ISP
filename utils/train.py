@@ -1,4 +1,3 @@
-import torch
 import sys
 import logging
 

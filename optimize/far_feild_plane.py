@@ -38,10 +38,10 @@ parser.add_argument("--NetworkSpecs", default={
 parser.add_argument("--CodeLength", default=256)
 parser.add_argument("--tol", default=1E-5) # GMRES tol
 parser.add_argument("--lr", default=0.001) # optimize learning rate
-parser.add_argument("--Nr", type=int, default=32) # marching cubes space
+parser.add_argument("--Nr", type=int, default=24) # marching cubes space
 parser.add_argument("--level", default=0.05) # marching cubes level
 parser.add_argument("--wavenumber", default=5*np.pi) # wavenumber
-parser.add_argument("--num_d", default=4) # number of incident direction
+parser.add_argument("--num_d", default=1) # number of incident direction
 parser.add_argument("--num_far", default=100) # number of Observed direction
 parser.add_argument("--z_i", type=int, default=410) # 0-1780 in training set
 parser.add_argument("--z_t", type=int, default=2230) # 1780-2236 in test set

@@ -2,7 +2,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 import skimage.measure
-import torch
 from utils.sdf import _cartesian_product
 
 
