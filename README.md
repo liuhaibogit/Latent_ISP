@@ -2,6 +2,9 @@
 
 This is an implementation of 'Solving Inverse Obstacle Scattering Problem with Latent Surface Representations" by Junqing Chen, Bangti Jin and Haibo Liu. See the paper [here](https://arxiv.org/abs/2311.07187).
 
+![](optimize/meshchange.gif)
+
+
 # Citing Latent_ISP
 If you use Latent_ISP in your research, please cite the [paper](https://arxiv.org/abs/2311.07187):
 ```
@@ -17,19 +20,14 @@ If you use Latent_ISP in your research, please cite the [paper](https://arxiv.or
 
 # How to Use Latent_ISP
 
-This is the repro-pack for the latent-ISP using bempp-cl and DeepSDF. It has the following structure:
-
-- `optimize`: do the shape optimization.
-- `logs`: saving the trained DeepSDF network and optimizing results.
-
 Following the steps below to run each case:
 
-### 1. Install bempp-cl
+### 1. Install Latent_ISP
 
 We suggest to use `conda` as the package manager and create a conda environment for this application.
 ``` bash
 conda create --yes -n bempp python=3.8
-conda install -n bempp --yes numpy scipy matplotlib numba pytest jupyter plotly git pip mpi4py pyyaml
+conda install -n bempp --yes numpy scipy matplotlib numba scikit-image plotly git pip mpi4py pandas
 conda install -n bempp --yes -c conda-forge pocl pyopencl meshio
 ```
 Then activate this environment: `conda activate bempp`.
@@ -41,13 +39,19 @@ pip install git+git://github.com/bempp/bempp-cl@v0.2.2
 
 The installation will take several minutes on a normal workstation.
 
+Next, install pytorch depending on your device. For example,
+``` bash
+pip3 install torch torchvision torchaudio
+```
+
 Next, clone the repo:
 ``` bash
 git clone https://github.com/liuhaibogit/Latent_ISP.git
+cd Latent_ISP
 ```
 
 ### 2. Training a DeepSDF Model
-one could train the DeepSDF Model following https://github.com/facebookresearch/DeepSDF.git, and we have provided a trained neural network in the logs/DeepSDF_plane folder.
+one could train the DeepSDF Model following https://github.com/facebookresearch/DeepSDF.git, and we have provided a trained neural network in the logs/DeepSDF_plane folder. The experiment_train model is trained with the training data, and the experiment_total is trained with the test data which is used only to generate the scattering data.
 
 
 
